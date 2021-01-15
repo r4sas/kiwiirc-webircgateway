@@ -34,8 +34,13 @@ func (t *TransportKiwiirc) makeChannel(chanID string, ws sockjs.Session) *Transp
 
 	client.RemoteAddr = t.gateway.GetRemoteAddressFromRequest(ws.Request()).String()
 
+	remoteB32 := t.gateway.GetRemoteB32FromRequest(ws.Request())
+
 	clientHostnames, err := net.LookupAddr(client.RemoteAddr)
-	if err != nil || len(clientHostnames) == 0 {
+
+	if remoteB32 != "" {
+		client.RemoteHostname = remoteB32
+	} else if err != nil || len(clientHostnames) == 0 {
 		client.RemoteHostname = client.RemoteAddr
 	} else {
 		// FQDNs include a . at the end. Strip it out

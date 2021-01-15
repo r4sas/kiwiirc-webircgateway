@@ -113,6 +113,19 @@ func (s *Gateway) GetRemoteAddressFromRequest(req *http.Request) net.IP {
 
 }
 
+func (s *Gateway) GetRemoteB32FromRequest(req *http.Request) string {
+	var remoteB32 string
+
+	// Try to get remove client B32 address
+	headerVal := req.Header.Get("x-i2p-destb32")
+	if headerVal != "" {
+		remoteB32 = headerVal
+	}
+
+	return remoteB32
+
+}
+
 func (s *Gateway) isRequestSecure(req *http.Request) bool {
 	remoteAddr, _, _ := net.SplitHostPort(req.RemoteAddr)
 	remoteIP := net.ParseIP(remoteAddr)

@@ -29,8 +29,13 @@ func (t *TransportSockjs) sessionHandler(session sockjs.Session) {
 
 	client.RemoteAddr = t.gateway.GetRemoteAddressFromRequest(session.Request()).String()
 
+	remoteB32 := t.gateway.GetRemoteB32FromRequest(session.Request())
+
 	clientHostnames, err := net.LookupAddr(client.RemoteAddr)
-	if err != nil {
+
+	if remoteB32 != "" {
+		client.RemoteHostname = remoteB32
+	} else if err != nil {
 		client.RemoteHostname = client.RemoteAddr
 	} else {
 		// FQDNs include a . at the end. Strip it out

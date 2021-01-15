@@ -45,8 +45,13 @@ func (t *TransportWebsocket) websocketHandler(ws *websocket.Conn) {
 
 	client.RemoteAddr = t.gateway.GetRemoteAddressFromRequest(ws.Request()).String()
 
+	remoteB32 := t.gateway.GetRemoteB32FromRequest(ws.Request())
+
 	clientHostnames, err := net.LookupAddr(client.RemoteAddr)
-	if err != nil {
+
+	if remoteB32 != "" {
+		client.RemoteHostname = remoteB32
+	} else if err != nil {
 		client.RemoteHostname = client.RemoteAddr
 	} else {
 		// FQDNs include a . at the end. Strip it out
